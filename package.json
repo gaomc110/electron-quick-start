@@ -1,0 +1,53 @@
+{
+  "name": "electron-quick-start",
+  "version": "1.0.0",
+  "description": "智慧医疗管理平台",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-packager . ntzlWebApp --platform=win32 --arch=x64 --name=智慧医疗 --out=./out --asar --app-version=0.0.1",
+    "pack-mac": "electron-packager . ntzlWebApp --platform=darwin --electron-version=26.2.4 --download.mirrorOptions.mirror=https://npm.taobao.org/mirrors/electron/ --out=./out --icon=./icons/Icon.icns",
+    "build": "electron-builder --win --x64",
+    "build-mac": "electron-builder --macos",
+    "electron:generate-icons": "electron-icon-builder --input=./icon/icon.png --output=build --flatten"
+  },
+  "repository": "",
+  "keywords": [
+    "Electron",
+    "quick",
+    "start",
+    "tutorial",
+    "demo"
+  ],
+  "author": "gaomc",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "26.2.4",
+    "electron-icon-builder": "^2.0.1"
+  },
+  "dependencies": {
+    "electron-packager": "^17.1.2",
+    "qiao-electron": "^3.5.0"
+  },
+  "build": {
+    "productName": "智慧医疗",
+    "appId": "ntzlWebApp",
+    "mac": {
+      "icon": "build/icons/icon.icns"
+    },
+    "win": {
+      "icon": "build/icons/icon.ico"
+    },
+    "linux": {
+      "icon": "build/icons"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "installerIcon": "build/icons/icon.ico",
+      "uninstallerIcon": "build/icons/icon.ico"
+    }
+  }
+}
