@@ -1,19 +1,22 @@
 // qiao-electron
 var q = require('qiao-electron');
-
+var fs = require('fs');
 // version
 //var version = require('./package.json').version;
+// 获取配置文件的绝对路径（假设在 Electron 项目的根目录下）
+
 
 // 控制应用生命周期和创建原生浏览器窗口的模组
 const { app, protocol, BrowserWindow, Menu, globalShortcut } = require('electron')
-const path = require('node:path')
+const path = require('node:path');
+const { Console } = require('console');
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
-
+const configFilePath = path.join(__dirname,'..',  'config.json');
 // Scheme must be registered before the app is ready
-/*protocol.registerSchemesAsPrivileged([
+protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
-])*/
+])
 
 function createWindow () {
   // 创建浏览器窗口
@@ -35,11 +38,12 @@ function createWindow () {
     webPreferences: { // 解决跨域问题
       //开启调试
       //devTools: false,
+      webSecurity: false, //是否禁用同源策略
       //是否启动node
-      nodeIntegration: false,
+      nodeIntegration: true,
       //是否在独立 JavaScript 环境中运行 Electron API和指定的preload 脚本
-      contextIsolation: true,
-      preload: path.join(__dirname, 'preload.js')
+      contextIsolation: false,
+      //preload: path.join(__dirname, 'preload.js')
     }
   })
 
@@ -58,13 +62,17 @@ function createWindow () {
    // 隐藏菜单
    createMenu()
 
+   const configData = fs.readFileSync(configFilePath, 'utf-8');
+   const config = JSON.parse(configData);
+
+   console.log('config',config)
   if (app.isPackaged){
-    mainWindow.loadURL(`http://jsjeda.net:58084/`)
-    //mainWindow.loadFile('dist/index.html')
+    mainWindow.loadURL(config.baseUrl || `http://192.168.0.187:8088`)
+    //mainWindow.loadFile('public/index.html')
     //mainWindow.loadURL(`file://${path.join(__dirname,'../dist/index.html')}`)
   } else {
-    //mainWindow.loadFile('dist/index.html')
-    mainWindow.loadURL(`http://jsjeda.net:58084/`)
+    //mainWindow.loadFile('public/index.html')
+    mainWindow.loadURL(config.baseUrl || `http://192.168.0.187:8088`)
     //mainWindow.webContents.openDevTools()
   }
 
