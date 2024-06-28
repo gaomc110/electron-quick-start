@@ -6,9 +6,11 @@
   "scripts": {
     "start": "electron .",
     "pack": "electron-packager . ntzlWebApp --platform=win32 --arch=x64 --name=智慧医疗 --out=./out --asar --app-version=0.0.1",
-    "pack-mac": "electron-packager . ntzlWebApp --platform=darwin --electron-version=26.2.4 --download.mirrorOptions.mirror=https://npm.taobao.org/mirrors/electron/ --out=./out --icon=./icons/Icon.icns",
+    "pack-mac": "electron-packager . ntzlWebApp --platform=darwin --electron-version=26.2.4 --download.mirrorOptions.mirror=https://npm.taobao.org/mirrors/electron/ --out=./out --icon=./icon/Icon.icns",
     "build": "electron-builder --win --x64",
     "build-mac": "electron-builder --macos",
+    "build-linux": "electron-packager . ntzlWebApp --platform=linux --arch=x64 --out=./release-builds --overwrite",
+    "package:linux": "electron-packager . Agent --platform=linux --arch=x64 --out=../dist --asar --app-version=1.0.0 --electron-version=2.0.4 --overwrite",
     "electron:generate-icons": "electron-icon-builder --input=./icon/icon.png --output=build --flatten"
   },
   "repository": "",
@@ -27,6 +29,9 @@
   },
   "dependencies": {
     "electron-packager": "^17.1.2",
+    "electron-updater": "^6.2.1",
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7",
     "qiao-electron": "^3.5.0"
   },
   "build": {
@@ -36,10 +41,13 @@
       "icon": "build/icons/icon.icns"
     },
     "win": {
-      "icon": "build/icons/icon.ico"
+      "icon": "build/icons/icon.ico",
+      "signingHashAlgorithms": [
+        "sha256"
+      ]
     },
     "linux": {
-      "icon": "build/icons"
+      "icon": "build/icons/icon.png"
     },
     "nsis": {
       "oneClick": false,
@@ -48,6 +56,15 @@
       "createDesktopShortcut": true,
       "installerIcon": "build/icons/icon.ico",
       "uninstallerIcon": "build/icons/icon.ico"
+    },
+    "extraResources": {
+      "from": "config.json",
+      "to": "."
+    },
+    "publish": {
+      "provider": "generic",
+      "url": "",
+      "channel": "latest"
     }
   }
 }
