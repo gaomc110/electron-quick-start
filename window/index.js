@@ -9,14 +9,14 @@
  var fs = require('fs');
  //process.env.ROOT = join(__dirname, '../../')
  
- const isDevelopment = process.env.NODE_ENV == 'development'
+ //const isDevelopment = process.env.NODE_ENV == 'development' // 无效
 
  const configFilePath = path.join(__dirname,'../..',  'config.json');
  const configData = fs.readFileSync(configFilePath, 'utf-8');
  const config = JSON.parse(configData);
  // const winURL = isDevelopment ? 'http://localhost:3000/' : join(__dirname, 'dist/index.html')
  //const winURL = isDevelopment ? process.env.VITE_DEV_SERVER_URL : join(process.env.ROOT, 'dist/index.html')
- const winURL = isDevelopment ? config.baseUrl : `http://192.168.0.187:8088`
+ const winURL = config.baseUrl ? config.baseUrl : `http://192.168.0.187:8088`
  
  // 配置参数
  const defaultConfig = {
@@ -157,7 +157,7 @@
             frame: false,
             transparent: true
           })
-          splashScreen.loadFile('../public/loading.html')
+          splashScreen.loadFile('public/loading.html')
           splashScreen.show()
         
         

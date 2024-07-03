@@ -4,7 +4,7 @@
   "description": "智慧医疗管理平台",
   "main": "main.js",
   "scripts": {
-    "start": "electron .",
+    "start": "electron . ",
     "pack": "electron-packager . ntzlWebApp --platform=win32 --arch=x64 --name=智慧医疗 --out=./out --asar --app-version=0.0.1",
     "pack-mac": "electron-packager . ntzlWebApp --platform=darwin --electron-version=26.2.4 --download.mirrorOptions.mirror=https://npm.taobao.org/mirrors/electron/ --out=./out --icon=./icon/Icon.icns",
     "build": "electron-builder --win --x64",

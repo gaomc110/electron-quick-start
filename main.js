@@ -11,12 +11,11 @@ var fs = require('fs');
 const isPackaged = app.isPackaged;
 
 const MultiWindows = require('./window/index')
-
 // version
 //var version = require('./package.json').version;
 // 获取配置文件的绝对路径（假设在 Electron 项目的根目录下）
 
-const isDevelopment = process.env.NODE_ENV !== 'production'
+//const isDevelopment = process.env.NODE_ENV !== 'production'
 //const configFilePath = path.join(__dirname,'..',  'config.json');
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -203,7 +202,7 @@ ipcMain.on('win-create', (event, args) => this.createWin(args))
 // 也可以拆分成几个文件，然后用 require 导入。
 
 // Exit cleanly on request from parent process in development mode.
-if (isDevelopment) {
+/*if (isDevelopment) {
   if (process.platform === 'win32') {
     process.on('message', (data) => {
       if (data === 'graceful-exit') {
@@ -215,6 +214,6 @@ if (isDevelopment) {
       app.quit()
     })
   }
-}
+}*/
 
 
