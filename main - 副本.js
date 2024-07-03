@@ -1,6 +1,6 @@
 
 // 控制应用生命周期和创建原生浏览器窗口的模组
-const { app, protocol, BrowserWindow, Menu, globalShortcut, dialog,ipcMain } = require('electron');
+const { app, protocol, BrowserWindow, Menu, globalShortcut, dialog } = require('electron');
 const { autoUpdater } = require("electron-updater");
 const path = require('node:path');
 const { Console } = require('console');
@@ -10,14 +10,12 @@ var fs = require('fs');
 
 const isPackaged = app.isPackaged;
 
-const MultiWindows = require('./window/index')
-
 // version
 //var version = require('./package.json').version;
 // 获取配置文件的绝对路径（假设在 Electron 项目的根目录下）
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
-//const configFilePath = path.join(__dirname,'..',  'config.json');
+const configFilePath = path.join(__dirname,'..',  'config.json');
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } }
@@ -25,7 +23,7 @@ protocol.registerSchemesAsPrivileged([
 
 function createWindow () {
   // 创建浏览器窗口
-  /*const mainWindow = new BrowserWindow({
+  const mainWindow = new BrowserWindow({
     backgroundColor: '#2e2c29',
     width: process.env === 'development' ? 800 : 1200, // 初始宽度
     height: 540,
@@ -50,16 +48,24 @@ function createWindow () {
       contextIsolation: false,
       //preload: path.join(__dirname, 'preload.js')
     }
-  })*/
+  })
 
-  let mainWindow = new MultiWindows()
+  let splashScreen = new BrowserWindow({
+    width: process.env === 'development' ? 800 : 1200, // 初始宽度
+    height: 540,
+    frame: false,
+    transparent: true
+  })
+  splashScreen.loadFile('public/loading.html')
+  splashScreen.show()
 
-  mainWindow.createWin({isMainWin: true})
-  mainWindow.ipcMainListen()
 
-  
+  mainWindow.setMenu(null);
 
-   /*const configData = fs.readFileSync(configFilePath, 'utf-8');
+   // 隐藏菜单
+   createMenu()
+
+   const configData = fs.readFileSync(configFilePath, 'utf-8');
    const config = JSON.parse(configData);
 
    console.log('config',config)
@@ -71,28 +77,28 @@ function createWindow () {
     //mainWindow.loadFile('public/index.html')
     mainWindow.loadURL(config.baseUrl || `http://192.168.0.187:8088`)
     //mainWindow.webContents.openDevTools()
-  }*/
+  }
 
 
   // 显示窗口
-  /*mainWindow.once('ready-to-show', () => {
+  mainWindow.once('ready-to-show', () => {
     splashScreen.destroy()
     mainWindow.show()
-  })*/
+  })
 
   // 页面加载识别或成功处理
-  /*mainWindow.webContents.on('did-finish-load',()=>{
+  mainWindow.webContents.on('did-finish-load',()=>{
     console.log('finish')
-  })*/
+  })
 
   // 页面加载失败处理
-  /*mainWindow.webContents.on('did-fail-load',()=>{
+  mainWindow.webContents.on('did-fail-load',()=>{
     console.log('fail')
     // 显示404页面
     mainWindow.loadFile('public/error/404.html')
     // 重新加载页面
     //mainWindow.reload();
-  })*/
+  })
 
    // 自动更新
    function handleUpdate() {
@@ -160,7 +166,7 @@ function createWindow () {
   }
 
   if (isPackaged) {
-    //handleUpdate();
+    handleUpdate();
   }
 
 
@@ -197,8 +203,6 @@ app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 })
 
-ipcMain.on('win-create', (event, args) => this.createWin(args))
-
 // 在这个文件中，你可以包含应用程序剩余的所有部分的代码，
 // 也可以拆分成几个文件，然后用 require 导入。
 
@@ -217,4 +221,54 @@ if (isDevelopment) {
   }
 }
 
-
+// 设置菜单栏
+function createMenu() {
+  // darwin表示macOS，针对macOS的设置
+  if (process.platform === 'darwin') {
+    const template = [{
+      label: 'Electron',
+      submenu: [{
+        role: 'about'
+      }, {
+        role: 'quit'
+      }]
+    }]
+    Menu.setApplicationMenu(Menu.buildFromTemplate(template))
+  } else {
+    // windows及linux系统
+    /**
+     * 自定义菜单
+     */
+    const template = [{
+      label: '工具',
+      submenu: [{
+        label: '重新加载',
+        accelerator: 'CmdOrCtrl+R',
+        click: (item, focusedWindow) => {
+          if (focusedWindow) {
+            if (focusedWindow.id === 1) {
+              BrowserWindow.getAllWindows().forEach(function(mainWin) {
+                if (mainWin.id > 1) {
+                  mainWin.close()
+                }
+              })
+            }
+            focusedWindow.reload()
+          }
+        }
+      }, {
+        label: '开发者工具',
+        accelerator: 'CommandOrControl+Shift+i',
+        click: function(item, focusedWindow) {
+          if (focusedWindow) {
+            focusedWindow.toggleDevTools()
+          }
+        }
+      }
+    ]
+    }]
+    
+    // 将菜单应用到窗口上
+    Menu.setApplicationMenu(Menu.buildFromTemplate(template))
+  }
+}

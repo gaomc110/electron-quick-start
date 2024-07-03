@@ -63,7 +63,7 @@
     },
     "publish": {
       "provider": "generic",
-      "url": "",
+      "url": "https://download.csdn.net/download/github_38400706/89492645",
       "channel": "latest"
     }
   }
